@@ -46,6 +46,14 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     public function create(Form $form, array $data)
     {
         $zfcUserOptions = $this->getZfcUserOptions();
+        $entityClass = $zfcUserOptions->getUserEntityClass();
+
+        $form->bind(new $entityClass);
+        $form->setData($data);
+        if ( ! $form->isValid() ) {
+            return false;
+        }
+
         $user = $form->getData();
 
         $argv = array();

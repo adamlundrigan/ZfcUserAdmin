@@ -73,38 +73,12 @@ class EditUser extends Register
     {
         $this->userEntity = $userEntity;
         $this->getEventManager()->trigger('userSet', $this, array('user' => $userEntity));
+        $this->bind($userEntity);
     }
 
     public function getUser()
     {
         return $this->userEntity;
-    }
-
-    public function populateFromUser(UserInterface $user)
-    {
-        foreach ($this->getElements() as $element) {
-            /** @var $element \Zend\Form\Element */
-            $elementName = $element->getName();
-            if (strpos($elementName, 'password') === 0) continue;
-
-            $getter = $this->getAccessorName($elementName, false);
-            if (method_exists($user, $getter)) $element->setValue(call_user_func(array($user, $getter)));
-        }
-
-        foreach ($this->getUserEditOptions()->getEditFormElements() as $element) {
-            $getter = $this->getAccessorName($element, false);
-            $this->get($element)->setValue(call_user_func(array($user, $getter)));
-        }
-        $this->get('userId')->setValue($user->getId());
-    }
-
-    protected function getAccessorName($property, $set = true)
-    {
-        $parts = explode('_', $property);
-        array_walk($parts, function (&$val) {
-            $val = ucfirst($val);
-        });
-        return (($set ? 'set' : 'get') . implode('', $parts));
     }
 
     public function setUserEditOptions(UserEditOptionsInterface $userEditOptions)

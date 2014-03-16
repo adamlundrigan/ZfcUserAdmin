@@ -41,22 +41,12 @@ class UserAdminController extends AbstractActionController
         /** @var $form \ZfcUserAdmin\Form\CreateUser */
         $form = $this->getServiceLocator()->get('zfcuseradmin_createuser_form');
         $request = $this->getRequest();
-
+        
         /** @var $request \Zend\Http\Request */
         if ($request->isPost()) {
-            $zfcUserOptions = $this->getZfcUserOptions();
-            $class = $zfcUserOptions->getUserEntityClass();
-            $user = new $class();
-            $form->setHydrator(new ClassMethods());
-            $form->bind($user);
-            $form->setData($request->getPost());
-
-            if ($form->isValid()) {
-                $user = $this->getAdminUserService()->create($form, (array)$request->getPost());
-                if ($user) {
-                    $this->flashMessenger()->addSuccessMessage('The user was created');
-                    return $this->redirect()->toRoute('zfcadmin/zfcuseradmin/list');
-                }
+            if ($this->getAdminUserService()->create($form, (array)$request->getPost())) {
+                $this->flashMessenger()->addSuccessMessage('The user was created');
+                return $this->redirect()->toRoute('zfcadmin/zfcuseradmin/list');
             }
         }
 
