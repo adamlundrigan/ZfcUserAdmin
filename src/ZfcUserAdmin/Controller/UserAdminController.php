@@ -77,16 +77,10 @@ class UserAdminController extends AbstractActionController
         /** @var $request \Zend\Http\Request */
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setData($request->getPost());
-            if ($form->isValid()) {
-                $user = $this->getAdminUserService()->edit($form, (array)$request->getPost(), $user);
-                if ($user) {
-                    $this->flashMessenger()->addSuccessMessage('The user was edited');
-                    return $this->redirect()->toRoute('zfcadmin/zfcuseradmin/list');
-                }
+            if ($this->getAdminUserService()->edit($form, (array)$request->getPost(), $user)) {
+                $this->flashMessenger()->addSuccessMessage('The user was edited');
+                return $this->redirect()->toRoute('zfcadmin/zfcuseradmin/list');
             }
-        } else {
-            $form->populateFromUser($user);
         }
 
         return array(

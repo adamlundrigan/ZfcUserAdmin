@@ -77,14 +77,18 @@ class User extends EventProvider implements ServiceManagerAwareInterface
      */
     public function edit(Form $form, array $data, UserInterface $user)
     {
-        // first, process all form fields
-        foreach ($data as $key => $value) {
-            if ($key == 'password') continue;
-
-            $setter = $this->getAccessorName($key);
-            if (method_exists($user, $setter)) call_user_func(array($user, $setter), $value);
+        
+        if ( empty($data['password']) ) {
+            unset($data['password']);
         }
-
+        
+        $form->setUser($user);
+        $form->setData($data);
+                
+        if ( ! $form->isValid() ) {
+            return false;
+        }
+        
         $argv = array();
         // then check if admin wants to change user password
         if ($this->getOptions()->getAllowPasswordChange()) {
