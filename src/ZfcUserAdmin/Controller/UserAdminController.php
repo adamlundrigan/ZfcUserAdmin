@@ -82,6 +82,10 @@ class UserAdminController extends AbstractActionController
                 return $this->redirect()->toRoute('zfcadmin/zfcuseradmin/list');
             }
         }
+        
+        if ($form->has('password')) {
+            $form->get('password')->setValue('');
+        }
 
         return array(
             'editUserForm' => $form,
